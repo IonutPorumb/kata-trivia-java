@@ -2,12 +2,12 @@ package trivia;
 
 public interface IGame {
 
-	boolean add(String playerName);
+    boolean add(String playerName);
 
-	void roll(int roll);
+    void roll(int roll);
 
-	boolean wasCorrectlyAnswered();
+    boolean wasCorrectlyAnswered();
 
-	boolean wrongAnswer();
+    boolean wrongAnswer();
 
 }

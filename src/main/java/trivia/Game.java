@@ -1,13 +1,14 @@
 package trivia;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 
 
 // REFACTOR ME
 public class Game implements IGame {
-    // *** The ArrayList element types should be specified.
-    // *** private access modifiers were used for class attributes (Encapsulation).
+    /**
+     * The ArrayList element types should be specified.
+     * private access modifiers were used for class attributes (Encapsulation).
+     */
     private ArrayList<Player> players = new ArrayList<>();
 
 //    private int[] places = new int[6];
@@ -15,14 +16,19 @@ public class Game implements IGame {
 //    private boolean[] inPenaltyBox = new boolean[6];
 
     private Question question;
-    // *** The LinkedList element types should be specified.
+    /**
+     * The LinkedList element types should be specified.
+     */
 //    private LinkedList<String> popQuestions = new LinkedList<>();
 //    private LinkedList<String> scienceQuestions = new LinkedList<>();
 //    private LinkedList<String> sportsQuestions = new LinkedList<>();
 //    private LinkedList<String> rockQuestions = new LinkedList<>();
-    private int currentPlayerIdX = 0;
+    private int currentPlayerIdx = 0;
     private boolean isGettingOutOfPenaltyBox;
-    // *** NO_OF_QUESTIONS constant was defined to specify the max question no.
+
+    /**
+     * NO_OF_QUESTIONS constant was defined to specify the max question no.
+     */
 //    private static final int NO_OF_QUESTIONS = 50;
 
     // A specific private method should be created for each question for better readability.
@@ -36,27 +42,29 @@ public class Game implements IGame {
 //        }
     }
 
-    // *** Create a single method to create questions and call it in the class constructor with relevant argument.
+    /**
+     * Create a single method to create questions and call it in the class constructor with relevant argument.
+     */
 
 //    private String createQuestions(String boardPosition, int index) {
 //        return boardPosition + " Question " + index;
 //    }
 
-    // *** isPlayable() method has no usage and can be removed.
+    /** isPlayable() method has no usage and can be removed. */
 
-    // *** this keyword was added to refer the current object attributes.
+    /**
+     * this keyword was added to refer the current object attributes.
+     */
     @Override
     public boolean add(String playerName) {
         try {
-            if (playerName.trim().length() < 2) {
-                throw new IllegalArgumentException("playerName should contain at least 2 characters");
-            }
+            this.players.add(new Player(playerName));
         } catch (IllegalArgumentException e) {
             System.out.println("Invalid name: " + e.getMessage());
-            playerName = "Player" + (this.howManyPlayers() + 1);
+            playerName = "Player" + (this.players.size() + 1);
             System.out.println("Generated name: " + playerName);
+            this.players.add(new Player(playerName));
         }
-        this.players.add(new Player(playerName));
 //        this.places[this.howManyPlayers()] = 0;
 //        this.purses[this.howManyPlayers()] = 0;
 //        this.inPenaltyBox[this.howManyPlayers()] = false;
@@ -65,55 +73,51 @@ public class Game implements IGame {
         return true;
     }
 
-    private int howManyPlayers() {
-        return this.players.size();
+    private void newCategory(Player currentPlayer, int roll) {
+        currentPlayer.setPlace(roll);
+        System.out.println(currentPlayer.getName()
+                + "'s new location is "
+                + currentPlayer.getPlace());
+        System.out.println("The category is " + question.getCategory(currentPlayer.getPlace()));
+        askQuestion(currentPlayer);
     }
 
     @Override
     public void roll(int roll) {
-        Player currentPlayer = this.players.get(this.currentPlayerIdX);
+        Player currentPlayer = this.players.get(this.currentPlayerIdx);
         System.out.println(currentPlayer.getName() + " is the current player");
         System.out.println("They have rolled a " + roll);
 
         if (currentPlayer.inPenaltyBox()) {
             if (roll % 2 != 0) {
                 this.isGettingOutOfPenaltyBox = true;
-
                 System.out.println(currentPlayer.getName() + " is getting out of the penalty box");
-                currentPlayer.setPlace(roll);
-                System.out.println(currentPlayer.getName()
-                        + "'s new location is "
-                        + currentPlayer.getPlace());
-                System.out.println("The category is " + question.getQuestion(currentPlayer.getPlace()));
-                askQuestion(currentPlayer);
+                newCategory(currentPlayer, roll);
             } else {
                 System.out.println(currentPlayer.getName() + " is not getting out of the penalty box");
                 this.isGettingOutOfPenaltyBox = false;
             }
-
         } else {
-
 //            this.places[this.currentPlayer] = this.places[this.currentPlayer] + roll;
 //            if (this.places[this.currentPlayer] > 12)
 //                this.places[this.currentPlayer] = this.places[this.currentPlayer] - 12;
-
-            System.out.println(currentPlayer.getName()
-                    + "'s new location is "
-                    + currentPlayer.getPlace());
-            System.out.println("The category is " + question.getQuestion(currentPlayer.getPlace()));
-            askQuestion(currentPlayer);
+            newCategory(currentPlayer, roll);
         }
 
     }
 
-    // *** askQuestion() method is called only inside the class so the access was changed to private.
-//   *** if conditions can be replaced by switch statement
+    /**
+     * askQuestion() method is called only inside the class so the access was changed to private.
+     * if conditions can be replaced by switch statement
+     */
     private void askQuestion(Player currentPlayer) {
         System.out.println(question.getQuestion(currentPlayer.getPlace()));
     }
 
-    // *** currentCategory() method is called only inside the class so the access was changed to private.
-// *** if conditions can be replaced by switch statement
+    /**
+     * currentCategory() method is called only inside the class so the access was changed to private.
+     * if conditions can be replaced by switch statement
+     */
 //    private String currentCategory() {
 //        switch (this.places[this.currentPlayer]) {
 //            case 1, 5, 9:
@@ -126,58 +130,59 @@ public class Game implements IGame {
 //                return "Rock";
 //        }
 //    }
+    private boolean findWinner(Player currentPlayer) {
+        System.out.println("Answer was correct!!!!");
+        currentPlayer.incrementPurses();
+        System.out.println(currentPlayer.getName()
+                + " now has "
+                + currentPlayer.getPurses()
+                + " Gold Coins.");
+        boolean winner = didPlayerWin();
+        this.currentPlayerIdx++;
+        if (this.currentPlayerIdx == this.players.size()) this.currentPlayerIdx = 0;
+        return winner;
+    }
 
     @Override
     public boolean wasCorrectlyAnswered() {
-        Player currentPlayer = this.players.get(this.currentPlayerIdX);
+        Player currentPlayer = this.players.get(this.currentPlayerIdx);
         if (currentPlayer.inPenaltyBox()) {
             if (this.isGettingOutOfPenaltyBox) {
-                System.out.println("Answer was correct!!!!");
-                currentPlayer.incrementPurses();
-                System.out.println(currentPlayer.getName()
-                        + " now has "
-                        + currentPlayer.getPurses()
-                        + " Gold Coins.");
-
-                boolean winner = didPlayerWin();
-                this.currentPlayerIdX = (this.currentPlayerIdX + 1) % this.players.size();
-
-                return winner;
+                return findWinner(currentPlayer);
             } else {
-                this.currentPlayerIdX = (this.currentPlayerIdX + 1) % this.players.size();
+                this.currentPlayerIdx++;
+                if (this.currentPlayerIdx == this.players.size()) this.currentPlayerIdx = 0;
                 return true;
             }
 
 
         } else {
-// *** a typo was found in the printed message. The typo was fixed also in GameOld class to avoid the GameTest failing.
-            System.out.println("Answer was correct!!!!");
-            currentPlayer.incrementPurses();
-            System.out.println(currentPlayer.getName()
-                    + " now has "
-                    + currentPlayer.getPurses()
-                    + " Gold Coins.");
-
-            boolean winner = didPlayerWin();
-            this.currentPlayerIdX = (this.currentPlayerIdX + 1) % this.players.size();
-
-            return winner;
+            /** a typo was found in the printed message. The typo was fixed also in GameOld class
+             * to avoid the GameTest failing.
+             */
+            return findWinner(currentPlayer);
         }
     }
 
-    //   *** The message that suggest the player 'was sent to the penalty box' should be called after the value for related player was set to true
+    /**
+     * The message that suggest the player 'was sent to the penalty box' should be called after
+     * the value for related player was set to true
+     */
     @Override
     public boolean wrongAnswer() {
-        Player currentPlayer = this.players.get(this.currentPlayerIdX);
+        Player currentPlayer = this.players.get(this.currentPlayerIdx);
         System.out.println("Question was incorrectly answered");
         currentPlayer.setInPenaltyBox(true);
         System.out.println(currentPlayer.getName() + " was sent to the penalty box");
-        this.currentPlayerIdX = (this.currentPlayerIdX + 1) % this.players.size();
+        this.currentPlayerIdx++;
+        if (this.currentPlayerIdx == this.players.size()) this.currentPlayerIdx = 0;
         return true;
     }
 
-    // *** didPlayerWin() method is called only inside the class so the access was changed to private.
+    /**
+     * didPlayerWin() method is called only inside the class so the access was changed to private.
+     */
     private boolean didPlayerWin() {
-        return !(this.players.get(this.currentPlayerIdX).getPurses() == 6);
+        return !(this.players.get(this.currentPlayerIdx).getPurses() == 6);
     }
 }
