@@ -1,5 +1,7 @@
 package trivia;
 
 public interface IQuestion {
-    public String getQuestion(int position);
+    String getCategory(int position);
+
+    String getQuestion(int position);
 }

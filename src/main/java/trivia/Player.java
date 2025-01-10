@@ -7,12 +7,22 @@ public class Player implements IPlayer {
     private boolean inPenaltyBox;
 
     public Player(String playerName) {
+        if (playerName.trim().length() < 2) {
+            throw new IllegalArgumentException("playerName should contain at least 2 characters");
+        }
         this.playerName = playerName;
     }
+
+    @Override
+    public String getName() {
+        return this.playerName;
+    }
+
     @Override
     public int getPlace() {
         return this.places;
     }
+
     @Override
     public void setPlace(int roll) {
         this.places = this.places + roll;
@@ -20,24 +30,24 @@ public class Player implements IPlayer {
             this.places -= 12;
         }
     }
+
     @Override
     public int getPurses() {
         return this.purses;
     }
-    @Override
-    public String getName() {
-        return this.playerName;
-    }
+
     @Override
     public void incrementPurses() {
         this.purses++;
     }
+
     @Override
-    public boolean inPenaltyBox(){
+    public boolean inPenaltyBox() {
         return this.inPenaltyBox;
     }
+
     @Override
-    public void setInPenaltyBox(boolean inPenaltyBox){
+    public void setInPenaltyBox(boolean inPenaltyBox) {
         this.inPenaltyBox = inPenaltyBox;
     }
 

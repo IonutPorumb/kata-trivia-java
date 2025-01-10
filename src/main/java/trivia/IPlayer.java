@@ -1,12 +1,18 @@
 package trivia;
 
-public interface IPlayer {
-    public void setPlace(int roll);
-    public int getPlace();
-    public int getPurses();
-    public String getName();
-    public void incrementPurses();
-    public boolean inPenaltyBox();
-    public void setInPenaltyBox(boolean inPenaltyBox);
+interface IPlayer {
+    String getName();
+
+    void setPlace(int roll);
+
+    int getPlace();
+
+    int getPurses();
+
+    void incrementPurses();
+
+    boolean inPenaltyBox();
+
+    void setInPenaltyBox(boolean inPenaltyBox);
 
 }
