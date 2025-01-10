@@ -4,7 +4,13 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 
 public class Question implements IQuestion {
+    /**
+     * The LinkedList element types should be specified.
+     */
     private ArrayList<LinkedList<String>> questions = new ArrayList<>();
+    /**
+     * NO_OF_QUESTIONS constant was defined to specify the max question no.
+     */
     private static final int NO_OF_QUESTIONS = 50;
 
     public Question() {
@@ -18,11 +24,17 @@ public class Question implements IQuestion {
             questions.get(3).addLast(createQuestion("Rock", i));
         }
     }
-
+    /**
+    A specific private method should be created for each question for better readability.
+     */
     private String createQuestion(String category, int index) {
         return category + " Question " + index;
     }
 
+    /**
+     * currentCategory() method was renamed as getCategory().
+     * if conditions can be replaced by switch statement
+     */
     @Override
     public String getCategory(int position) {
         switch (position) {
